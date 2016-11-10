@@ -2,6 +2,6 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'my-app',
-    template: `<h1>Hello Angular</h1>`
+    template: `<hs-portal-layout></hs-portal-layout>`
 })
 export class AppComponent { }
