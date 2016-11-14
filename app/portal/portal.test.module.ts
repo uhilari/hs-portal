@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { LayoutTestComponent } from './layout/layout.test.component';
+import { LayoutTestComponent } from './layout/layout.component.test';
 
 @NgModule({
 	declarations: [ LayoutTestComponent ],
