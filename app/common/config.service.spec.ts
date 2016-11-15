@@ -24,7 +24,7 @@ describe('ConfigService', () => {
 		expect(configSvc).toBeDefined();
 	}));
 
-	describe('obtener en mem', () => {
+	describe('obtener', () => {
 		let cfgSvc: ConfigService;
 		beforeEach(inject([ ConfigService ], (configSvc: ConfigService) => {
 			cfgSvc = configSvc;
@@ -33,23 +33,25 @@ describe('ConfigService', () => {
 			};
 		}));
 		it('existe valor', () => {
-			cfgSvc.obtener('titulo')
-				.then((titulo) => {
-					expect(titulo).toBe('HsPortal');
-				});
+			var titulo = cfgSvc.obtener('titulo');
+			expect(titulo).toBe('HsPortal');
 		});
 		it('no existe el valor', () => {
-			cfgSvc.obtener('nombre')
-				.then(() => {
-					fail('debe lanzar un error');
-				})
-				.catch((reason) => {
-					expect(reason).toBe("El módulo no tiene una configuración");
-				});
+			var nombre = cfgSvc.obtener('nombre');
+			expect(nombre).toBeUndefined();
+		});
+		it('no se ha cargado el config', () => {
+			try{
+				cfgSvc['_valorConfig'] = null;
+				cfgSvc.obtener('nombre');
+				fail('Debe lanzar una exception');
+			}
+			catch(err) {
+			}
 		});
 	});
 
-	describe('obtener no en memory', () => {
+	describe('cargar', () => {
 		let cfgSvc: ConfigService;
 		let mock: MockBackend;
 		let config: ValorConfig;
@@ -58,26 +60,20 @@ describe('ConfigService', () => {
 			mock = mockBackend;
 			config = { titulo: 'HS Portal' };
 		}));
-		it('existe valor', () => {
-			mock.connections.subscribe((conn: MockConnection) => {
-				conn.mockRespond(new Response(new ResponseOptions({ body: JSON.stringify(config) })));
+		it('data cargada', () => {
+			mock.connections.subscribe((cn: MockConnection) => {
+				cn.mockRespond(new Response(new ResponseOptions({ body: JSON.stringify(config )})));
 			});
-			cfgSvc.obtener('titulo')
-				.then((titulo) => {
-					expect(titulo).toBe('HsPortal');
-				});
+			cfgSvc.cargando().then((cfg: any) => {
+				expect(cfg.titulo).toBe('HS Portal');
+			});
 		});
-		it('no existe archivo', () => {
-			mock.connections.subscribe((conn: MockConnection) => {
-				conn.mockError(new Error('Not Found'));
+		it('no existe data', () => {
+			mock.connections.subscribe((cn: MockConnection) => {
+				cn.mockError(new Error("No existe el archivo"));
 			});
-			cfgSvc.obtener('titulo')
-				.then(() => {
-					fail('debe lanzar un error');
-				})
-				.catch((reason) => {
-					expect(reason).toBe("No existe el archivo de configuración");
-				});
+			cfgSvc.cargando()
+				.then(d => fail("Debe lanzar un erro"), r => expect(r).toBeDefined());
 		});
 	});
 });

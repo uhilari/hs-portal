@@ -8,30 +8,17 @@ export class ConfigService {
 
 	constructor(private http: Http) { }
 
-	private processPromise(nombre: string, res: (value?: any) => void, rej:(reason?: any) => void) {
-		if(this._valorConfig.hasOwnProperty(nombre)){
-			res(this._valorConfig[nombre]);
-		}
-		else {
-			rej("El módulo no tiene una configuración");
-		}
+	public obtener(nombre: string): any {
+		if (this._valorConfig == null)
+			throw "No ha cargado la configuración";
+		return this._valorConfig[nombre];
 	}
 
-	public obtener(nombre: string): Promise<any> {
-		return new Promise((res: (value?: any) => void, rej: (reason?: any) => void) => {
-			if (this._valorConfig == null) {
-				this.http.get('config/main.json')
-					.map(r => r.json())
-					.subscribe((data) => {
-						this._valorConfig = data;
-						this.processPromise(nombre, res, rej);
-					}, () => {
-						rej("No existe el archivo de configuración");
-					});
-			} 
-			else {
-				this.processPromise(nombre, res, rej);
-			}
+	public cargando(): Promise<any> {
+		return new Promise<any>((res, rej) => {
+			this.http.get('config/main.json')
+				.map(r => r.json())
+				.subscribe(d => res(d), r => rej(r));
 		});
 	}
 }
