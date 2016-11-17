@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { ApiConfigs, API_CONFIG } from './api/api.config';
+import { ApiConfigs, API_CONFIG, configDefault } from './api/api.config';
 
 @NgModule({
 	
@@ -9,7 +9,7 @@ export class SharedModule{
 		return {
 			ngModule: SharedModule,
 			providers: [
-				{ provide: API_CONFIG, multi: true, useValue: cfgs }
+				{ provide: API_CONFIG, multi: true, useValue: configDefault(cfgs) }
 			]
 		}
 	}
