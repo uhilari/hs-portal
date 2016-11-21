@@ -19,6 +19,10 @@ export interface Model {
 	delete(): Observable<void>;
 }
 
+export interface ReqService{
+	request<T>(url: string, metodo: RequestMethod): Observable<T>;
+}
+
 export interface Accion{
 	nombre: string;
 	metodo?: RequestMethod,

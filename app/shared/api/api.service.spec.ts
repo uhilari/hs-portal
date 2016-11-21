@@ -1,5 +1,6 @@
 import { ApiConfigs } from './api.config';
 import { ApiService, makeApiService } from './api.service';
+import { UrlService } from './url.service';
 import { SharedModule } from '../shared.module';
 
 import { Observable } from 'rxjs/Rx';
@@ -10,7 +11,7 @@ import { By }           from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 interface ISampleApi extends ApiService {
-	porPagina(args: any): Observable<any>;
+	porPagina(numero?: number): Observable<any>;
 }
 
 describe('ApiService', () => {
@@ -21,13 +22,14 @@ describe('ApiService', () => {
 				url: '/api/sample',
 				acciones: [
 					{ nombre: 'hijos' },
-					{ nombre: 'porPagina', url: '/pg/{numero}', estatico: true }
+					{ nombre: 'porPagina', url: '/pg/[0]', estatico: true }
 				]
 			} 
 		};
 		TestBed.configureTestingModule({
 			imports: [ HttpModule, SharedModule.forApi(cfg) ],
 			providers: [
+				UrlService,
 				SampleApi,
 				BaseRequestOptions,
 				MockBackend,
@@ -98,12 +100,13 @@ describe('ApiService', () => {
 			});
 		}));
 		it('correcto', () => { 
-			svc.porPagina({ numero: 1 }).subscribe(data => {
+			svc.porPagina(1).subscribe(data => {
 				expect(data.length).toBe(4);
 			}, (r: Error) => fail(r.message));
 		});
 		it('error de args', () => {
-			svc.porPagina({ pagina: 2}).subscribe(d => fail('Debe lanzar un error'), r => {});
+			expect(() => svc.porPagina())
+				.toThrowError('No se han podido cambiar los campos: [0]');
 		});
 	});
 });

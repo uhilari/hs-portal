@@ -1,5 +1,5 @@
 import { NavComponent } from './nav.component';
-import { NavService } from './nav.service';
+import { NAV_SERVICE } from '../portal.config';
 
 import { Observable, Observer } from 'rxjs/Rx';
 import { async, TestBed, ComponentFixture, inject } from '@angular/core/testing';
@@ -10,7 +10,7 @@ describe('NavComponent', () => {
 	let fixture: ComponentFixture<NavComponent>;
 	let comp: NavComponent;
 	let svc: any = {
-		obtenerItems: () => Observable.of([
+		list: () => Observable.of([
 			{ texto: 'Link'},
 			{ texto: 'Link'},
 			{ texto: 'Link'}
@@ -19,7 +19,7 @@ describe('NavComponent', () => {
 	beforeEach(() => {
 		TestBed.configureTestingModule({
 			declarations: [ NavComponent ],
-			providers: [{ provide: NavService, useValue: svc}]
+			providers: [{ provide: NAV_SERVICE, useValue: svc}]
 		});
 	});
 	beforeEach(() => {

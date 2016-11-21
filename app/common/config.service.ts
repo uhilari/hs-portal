@@ -15,11 +15,9 @@ export class ConfigService {
 	}
 
 	public cargando(): Promise<any> {
-		return new Promise<any>((res, rej) => {
-			this.http.get('config/main.json')
-				.map(r => r.json())
-				.subscribe(d => res(d), r => rej(r));
-		});
+		return this.http.get('config/main.json')
+			.map(r => r.json())
+			.toPromise();
 	}
 }
 

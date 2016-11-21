@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { NavService } from './nav.service';
+import { Inject, Component, OnInit } from '@angular/core';
+import { NAV_SERVICE, NavService } from '../portal.config';
 
 @Component({
 	selector: 'hs-portal-nav',
@@ -14,10 +14,10 @@ import { NavService } from './nav.service';
 export class NavComponent implements OnInit{
 	items: any[] = [];
 
-	constructor(private service: NavService) {}
+	constructor(@Inject(NAV_SERVICE) private service: NavService) {}
 
 	ngOnInit() {
-		this.service.obtenerItems()
+		this.service.list(1)
 			.subscribe(itms => {
 				this.items = itms;
 			});
